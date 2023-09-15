@@ -1,11 +1,24 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, messageLink } = require('discord.js');
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const {
+	Client,
+	Collection,
+	Events,
+	GatewayIntentBits,
+	messageLink
+} = require('discord.js');
+const client = new Client({
+	intents: [GatewayIntentBits.Guilds]
+});
 const dotenv = require('dotenv');
 const ical = require('node-ical');
-const { startOfDay, endOfDay } = require('date-fns');
-const { createCanvas } = require('canvas');
+const {
+	startOfDay,
+	endOfDay
+} = require('date-fns');
+const {
+	createCanvas
+} = require('canvas');
 const cron = require('node-cron');
 
 client.commands = new Collection();
@@ -64,9 +77,15 @@ client.on(Events.InteractionCreate, async interaction => {
 	} catch (error) {
 		console.error(error);
 		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+			await interaction.followUp({
+				content: 'There was an error while executing this command!',
+				ephemeral: true
+			});
 		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			await interaction.reply({
+				content: 'There was an error while executing this command!',
+				ephemeral: true
+			});
 		}
 	}
 });
@@ -90,7 +109,7 @@ function checkAndSendReminders() {
 					//console.log(`L'événement "${ev.summary}" commencera dans ${timeDifference} minutes.`);
 
 					if (timeDifference > 0 && timeDifference <= 20) {
-						const channel = client.channels.cache.get('1151166913133678623'); // Remplacez par l'ID de votre canal Discord
+						const channel = client.channels.cache.get('1151166913133678623');
 						channel.send(`Le cours "${ev.summary}" dans la salle ${ev.location} commencera à ${ev.start.toLocaleTimeString('fr-FR')}.`);
 						courseFound = true;
 
@@ -106,12 +125,19 @@ function checkAndSendReminders() {
 }
 
 function sendDailyCalendar() {
+	// Vérifier si le jour d'aujourd'hui est un samedi (6) ou un dimanche (0)
+	const today = new Date();
+	const dayOfWeek = today.getDay();
+	if (dayOfWeek === 6 || dayOfWeek === 0) {
+		return;
+	}
+
 	ical.fromURL('https://ade.univ-brest.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=5707&projectId=13&calType=ical&firstDate=2023-09-11&lastDate=2024-09-01&displayConfigId=25', {}, function (err, data) {
 		if (err) {
 			console.error('Erreur lors de la récupération des données iCal :', err);
 			return;
 		}
-		channelDaily = client.channels.cache.get('1151796319367737374');
+		channelDaily = client.channels.cache.get('1152311074251616256'); //salon edt du jour
 
 		dateCal = startOfDay(new Date());
 		const events = [];
@@ -155,13 +181,24 @@ function sendDailyCalendar() {
 		let y = 50; // Initial Y position for text
 
 		// Draw the title indicating the date
-		const dateString = dateCal.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+		const dateString = dateCal.toLocaleDateString('fr-FR', {
+			weekday: 'long',
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
 		ctx.fillText(`Groupe B2 pour ${dateString}`, 60, y);
 		y += 50; // Move down for events
 
 		for (const ev of events) {
-			const startDateString = ev.start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-			const endDateString = ev.end.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+			const startDateString = ev.start.toLocaleTimeString('fr-FR', {
+				hour: '2-digit',
+				minute: '2-digit'
+			});
+			const endDateString = ev.end.toLocaleTimeString('fr-FR', {
+				hour: '2-digit',
+				minute: '2-digit'
+			});
 
 			// Determine the event color based on event name
 			let eventColor = 'white'; // Default color
@@ -192,7 +229,9 @@ function sendDailyCalendar() {
 
 		// Send the generated image as a response
 		channelDaily.bulkDelete(10);
-		channelDaily.send({ files: ['calendarDaily.png'] });
+		channelDaily.send({
+			files: ['calendarDaily.png']
+		});
 	});
 }
 

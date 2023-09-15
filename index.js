@@ -210,7 +210,7 @@ function sendDailyCalendar() {
 			}
 			// Draw a rectangle for the event with the specified color
 			ctx.fillStyle = eventColor;
-			ctx.fillRect(50, y - 30, canvas.width - 100, eventHeight); // Adjust dimensions as needed
+			ctx.fillRect(50, y - 30, canvas.width - 100, eventHeight);
 
 			// Set font and style for event details
 			ctx.font = '30px sans-serif';
@@ -220,7 +220,7 @@ function sendDailyCalendar() {
 			ctx.fillText(`${startDateString} - ${endDateString}`, 60, y + 30);
 			ctx.fillText(`${ev.location}`, 60, y + 60);
 			ctx.fillText(`${ev.description}`, 60, y + 90);
-			y += eventHeight + eventSpacing; // Adjust as needed
+			y += eventHeight + eventSpacing;
 		}
 
 		// Save the canvas to an image file

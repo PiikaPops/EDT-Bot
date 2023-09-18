@@ -241,14 +241,15 @@ client.once('ready', () => {
 	console.log(`Connecté en tant que ${client.user.tag}`);
 
 	// Vérifiez et envoyez des rappels toutes les 5 minutes si aucun cours n'a été trouvé dans les 60 dernières minutes.
-	setInterval(() => {
+	/*setInterval(() => {
 		if (!courseFound) {
 			checkAndSendReminders()
 		}
 	}, 5 * 60 * 1000); // Toutes les 5 minutes
+	*/
 
 	//lancer le channelDaily tout les jours à 7h
-	cron.schedule('0 7 * * *', () => {
+	cron.schedule('30 7 * * *', () => {
 		sendDailyCalendar();
 	});
 });
